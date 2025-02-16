@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViewPrescription</title>
+<!--    <link rel="stylesheet" href="../static/bootstrap/bootstrap-5.3.3-dist/css/bootstrap.css" >-->
+    <link rel="stylesheet" th:href="@{/bootstrap/bootstrap-5.3.3-dist/css/bootstrap.css}" >
+</head>
+<body>
+<div th:insert="~{header-fragment :: header}"></div>
+    <form>
+    <div class="card">
+        <div>
+            <p class="card-header">Appointment / Prescription List</p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="text-center">
+                        <th>S.No</th><th>PrescriptionID</th><th>Appointment Id</th><th>No of Medicines</th><th>Action</th>
+                    </thead>
+                    <tbody class="text-center">
+                        <tr th:if="${#lists.isEmpty(prescriptionDtoLst)}">
+                            <td colspan="5">No data</td>
+                        </tr>
+                    <tr th:each="p,pStat : ${prescriptionDtoLst}">
+                        <td th:text="${pStat.count}"></td>
+                        <td th:text="${p.prescriptionId}"></td>
+                        <td th:text="${p.appointment.appointmentId}"></td>
+                        <td th:text="${p.totalNoOfMedicines}"></td>
+                        <td>
+                            <a th:href="@{'/prescription/'+${p.prescriptionId}}"
+                               class="btn btn-danger btn-sm">view</a>
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+
+
+
+    </div>
+</form>
+    
+    <script th:src="@{/bootstrap/bootstrap-5.3.3-dist/js/bootstrap.js}"></script>
+</body>
+</html>

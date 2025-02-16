@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>View/Create Prescription</title>
+<!--    <link rel="stylesheet" href="../static/bootstrap/bootstrap-5.3.3-dist/css/bootstrap.css">-->
+    <link  th:href="@{/bootstrap/bootstrap-5.3.3-dist/css/bootstrap.css}" rel="stylesheet">
+    <style>
+        #userDetails {
+         min-height: 50px;
+         min-width: 50px;
+         border-radius: 50%;
+         border: solid black 1px;
+         text-align: center;
+         display: flex;
+         /* Enable flexbox */
+         justify-content: center;
+         /* Center horizontally */
+         align-items: center;
+       }
+    </style>
+</head>
+
+<body>
+<div th:insert="~{header-fragment :: header}"></div>
+
+<!--          th:action="@{/createPrescription}" th:object="${prescriptionDtoModel}"-->
+
+    <form method="post"
+th:action="${viewType == 'existingPrescription' ? '/updatePrescription/'+appId : '/createPrescription'}"
+          th:object="${prescriptionDtoModel}"
+
+>
+        <div>
+            <div class="card">
+                <p class="card-header">Create Prescription</p>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-lg-2 col-md-2 col-sm-4">
+                            <label for="appointId" class="form-label">Appoint Id: </label>
+                            <select class="form-select" id="appointId" th:field="*{appointment.appointmentId}" aria-label="Default select example">
+                                <option th:value="-1" selected>SELECT</option>
+                                <option th:each="appoint: ${appointmentList}" th:value="${appoint.appointmentId}"
+                                    th:text="${appoint.appointmentId}">
+                                </option>
+                            </select>
+                            <p th:errors="*{appointment.appointmentId}" class="text-danger errTxt"></p>
+                        </div>
+
+
+                        <div class="col-lg-2 col-md-2 col-sm-4">
+                            <label for="medNameSelect" class="form-label">Medicine name: </label>
+                            <select class="form-select" id="medNameSelect" aria-label="Default select example">
+                                <option th:value="-1" selected>SELECT</option>
+                                <option th:each="med: ${medicineLst}" th:value="${med.medicineName}"
+                                    th:text="${med.medicineName}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12 mb-2">
+                            <label for="medDuration" class="form-label">Duration</label>
+                            <input type="text" class="form-control" id="medDuration" placeholder="Duration..">
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12 mb-2">
+                            <label for="medInstructions" class="form-label">Instructions</label>
+                            <input type="text" class="form-control" id="medInstructions" placeholder="Instructions..">
+                        </div>
+
+                        <div>
+                        <button class="btn-success btn-sm btn" id="ADDMED" type="button">ADD</button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="text-center">
+                                <th>S.No</th><th>Medicine Name</th><th>Duration</th><th>Instructions</th><th>Action</th>
+                                </thead>
+                                <tbody class="text-center" id="tableBody">
+                                <tr th:if="${#lists.isEmpty(prescriptionDtoModel.prescribedMedicines)}">
+                                    <td colspan="5">NO DATA</td>
+                                </tr>
+                                <tr th:each="pm,pmStats: ${prescriptionDtoModel.prescribedMedicines}">
+                                    <td th:text="${pmStats.count}"></td>
+                                    <td>
+                                        <input type="hidden" th:name="'prescribedMedicines['+(${pmStats.count}-1)+'].medicine.medicineName'"
+                                               th:value="${pm.medicine.medicineName}">
+                                        <span th:text="${pm.medicine.medicineName}"></span>
+                                    </td>
+
+                                    <td>
+                                        <input type="hidden" th:name="'prescribedMedicines['+(${pmStats.count}-1)+'].duration'"
+                                               th:value="${pm.duration}">
+                                        <span th:text="${pm.duration}"></span>
+                                    </td>
+
+                                    <td>
+                                        <input type="hidden" th:name="'prescribedMedicines['+(${pmStats.count}-1)+'].instructions'"
+                                               th:value="${pm.instructions}">
+                                        <span th:text="${pm.instructions}"></span>
+                                    </td>
+                                    <td>
+                                        <button type='button' class='btn btn-primary btn-sm' onclick=makeFieldsEditable(this)>Edit</button>
+                                        <a th:href="@{'/removePrescribedMedicine/'+${appId}+'/'+${pm.medicine.medicineName}}" class='btn btn-danger btn-sm'> Remove</a>
+                                    </td>
+
+
+
+
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+<!--                        <div>-->
+<!--                            <button type="submit" class="btn btn-success btn-sm">Create Prescription</button>-->
+<!--                        </div>-->
+
+                        <div>
+                            <!-- Update Button (Only shown when condition is true) -->
+                            <button th:if="${viewType == 'existingPrescription'}" type="submit" class="btn btn-primary btn-sm">Update Prescription</button>
+
+<!--                            <a th:if="${viewType == 'existingPrescription'}" th:href="@{'/updatePrescription/'+${appId}}"-->
+<!--                               class="btn btn-danger btn-sm">Update</a>-->
+                            <!--                             Create Button (Only shown when condition is false) -->
+                            <button th:unless="${viewType == 'existingPrescription'}" type="submit" class="btn btn-success btn-sm">Create Prescription</button>
+                        </div>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+<!--    <script src="../static/bootstrap/bootstrap-5.3.3-dist/js/bootstrap.js"></script>-->
+    <script th:src="@{/bootstrap/bootstrap-5.3.3-dist/js/bootstrap.js}"></script>
+<script>
+
+    var addbtn = document.getElementById("ADDMED").addEventListener('click', function () {
+            const medName = document.getElementById("medNameSelect").value;
+            const instructions = document.getElementById("medInstructions").value;
+            const duration = document.getElementById("medDuration").value;
+            alert(medName);
+
+            if (medName === '-1') {
+                alert("Add Medicine");
+                return;
+            } else if(instructions === ""){
+            alert("Instructions cannot be empty");
+            } else if(duration === ""){
+            alert("duration cannot be empty");
+            }
+
+            const tableBody = document.getElementById("tableBody");
+
+            // Remove "NO DATA" row if present
+             const noDataRow = tableBody.querySelector("tr td[colspan='5']");
+             if (noDataRow) {
+             noDataRow.parentElement.remove();
+    }
+
+
+            const rowCount = tableBody.rows.length + 1;
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+                <td>${rowCount}</td>
+                <td>
+                    <input type='hidden' name= "prescribedMedicines[${rowCount - 1}].medicine.medicineName" value="${medName}">
+                    <span>${medName}</span>
+                </td>
+                <td>
+                    <input type='hidden' name= "prescribedMedicines[${rowCount - 1}].instructions" value="${instructions}">
+                    <span>${instructions}</span>
+                </td>
+                  <td>
+                    <input type='hidden' name= "prescribedMedicines[${rowCount - 1}].duration" value="${duration}">
+                    <span>${duration}</span>
+                </td>
+                <td>
+                    <button type='button' class='btn btn-primary btn-sm' onclick=makeFieldsEditable(this)>Edit</button>
+                     <button type="button"  class='btn btn-danger btn-sm'>Remove</button>
+                </td>
+
+                `
+        });
+
+    function makeFieldsEditable(button){
+            alert("hI this is edit btn");
+
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td:not(:first-child):not(:last-child)');
+
+            cells.forEach(cell => {
+
+                const hiddenInput = cell.querySelector('input[type="hidden"]');
+                const spanContent = cell.querySelector('span');
+                //alert(spanContent);
+                if(hiddenInput){
+                    const isEditable = hiddenInput.type==='text';
+                    if(!isEditable){
+                        if(spanContent){
+                            spanContent.style.display="none";
+                        }
+
+                        const textValue = hiddenInput.value;
+                        alert(textValue);
+                        alert(spanContent);
+                        hiddenInput.type = "text";
+                        hiddenInput.value =textValue;
+                        hiddenInput.classList.add('form-control');
+                    }
+                }
+            });
+
+        }
+
+
+
+
+
+</script>
+</body>
+
+</html>

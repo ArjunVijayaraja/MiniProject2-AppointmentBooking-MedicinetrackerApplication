@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link th:href="@{/bootstrap/bootstrap-5.3.3-dist/css/bootstrap.css}" rel="stylesheet">
+    <style>
+        .outerContainer {
+<!--            min-height: 100dvh;-->
+<!--            box-sizing: border-box;-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+
+
+    min-height: 100dvh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    margin-top: 80px; /* Adjust based on header height */
+
+
+        }
+
+        #userDetails {
+          min-height: 50px;
+          min-width: 50px;
+          border-radius: 50%;
+          border: solid black 1px;
+          text-align: center;
+          display: flex;
+          /* Enable flexbox */
+          justify-content: center;
+          /* Center horizontally */
+          align-items: center;
+        }
+
+        #nav_header {
+    position: fixed;
+    top: 0; /* Ensure it sticks at the top */
+    z-index: 1000; /* Ensures it's above other content */
+    width: 100%; /* Full width */
+}
+
+
+        @media(max-width:760px) {
+
+            .slots p,
+            .btn {
+                font-size: 10px;
+            }
+        }
+
+        .slots p,
+        .btn {
+            font-size: 12px;
+        }
+
+        .errTxt {
+            margin-top: 1.2px;
+            margin-bottom: 0.8px;
+        }
+    </style>
+</head>
+
+<body>
+<div th:insert="~{header-fragment :: header}"></div>
+
+    <!--    <div id="header" class="header" th:insert="~{header-fragment :: header}"></div>-->
+    <div class="container-fluid d-flex flex-grow-1 p-2 outerContainer">
+        <!--        <div id="header" class="header" th:insert="~{header-fragment :: header}"></div>-->
+        <!--        <form method="post" th:action="@{/createAppointment}" th:object="${appointment_model}">-->
+        <div class="card flex-grow-1">
+<!--            <div class="card-header">-->
+<!--                <h4 class="text-center">Book Your Appointment</h4>-->
+<!--            </div>-->
+            <form method="post" th:action="@{/createAppointment}" th:object="${appointmentFormObject}">
+
+                <div class="card-body slots">
+                    <div class="row g-3 mb-2">
+
+                        <div class="col-lg-2 col-md-2 col-sm-4">
+                            <label for="departName" class="form-label">Department Name: </label>
+                            <select class="form-select" id="departName" th:field="*{departmentId}" aria-label="Default select example">
+                                <option th:value="-1" selected>SELECT</option>
+                                <option th:each="dep: ${departmentDtoLst_model}" th:value="${dep.departmentId}"
+                                        th:text="${dep.departmentName}">
+                                </option>
+                            </select>
+                            <p th:errors="*{departmentId}" class="text-danger errTxt"></p>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-4">
+                            <label for="doctorName" class="form-label">Doctor Name: </label>
+                            <select class="form-select" id="doctorName" th:field="*{doctorId}" aria-label="Default select example">
+                                <option th:value="-1" selected>SELECT</option>
+                                <option th:each="doc: ${doctorDtoLst}" th:value="${doc.doctorId}"
+                                        th:text="${doc.doctorName}">
+                                </option>
+                            </select>
+                            <p th:errors="*{doctorId}" class="text-danger errTxt"></p>
+                        </div>
+
+                        <div class="mb-3 col-lg-2 col-md-2 col-sm-12">
+                            <label for="apptDate" class="form-label">Appointment Date</label>
+                            <input th:field="*{appointmentDate}" type="date" class="form-control" id="apptDate">
+                            <p th:errors="*{appointmentDate}" class="text-danger errTxt"
+                                th:if="${#fields.hasErrors('appointmentDate')}"></p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3 mb-2">
+                        <div class="d-flex overflow-x-auto">
+                            <div th:each="slot : ${slotDto_lst}"
+                                class="col-lg-2 col-sm-4 p-2 shadow-sm p-3 mb-2 bg-body-tertiary rounded">
+                                <div class="d-flex card-header">
+                                    <div class="form-check">
+                                        <input type="radio" th:field="*{slotId}" th:value="${slot.slotId}"
+                                            th:id="'appointmentSlotBtn_' + ${slot.slotId}" class="form-check-input">
+                                        <label th:for="'appointmentSlotBtn_' + ${slot.slotId}"
+                                            class="form-check-label"></label>
+                                    </div>
+                                    <h6 class="flex-grow-1" th:text="'Slot ' + ${slot.slotId}"></h6>
+                                </div>
+                                <div class="card-body ">
+                                    <p class="mb-1" th:text="${slot.slotTiming}"></p>
+                                    <p class="mb-1">Appoint Available: 10</p>
+                                    <button type="submit" th:id="'appointmentSlotBtn_' + ${slot.slotId}"
+                                        class="btn btn-success btn-sm bookbtn">Book</button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <p th:errors="*{slotId}" class="text-danger errTxt mt-0"
+                            th:if="${#fields.hasErrors('slotId')}"></p>
+                    </div>
+
+
+                    <div class="row g-3 mt-2">
+                        <div class="container ">
+                            <div class="card d-flex flex-column">
+                                <div class="card-header d-flex justify-content-between">
+                                    <h4 class="text-start">Appointment List</h4>
+                                    <div>
+                                        <input type="text" id="searchEmp" role="textbox" placeholder="search.."
+                                            class="my-1" style="height:30px; border-radius:6px; ">
+                                    </div>
+                                </div>
+                                <div class="card-body flex-grow-1 p-0" style="max-height: 300px;min-height:300px; overflow-y: auto;">
+                                    <div class="table-responsive mt-1">
+                                        <table class="table table-bordered mt-0">
+                                            <thead class="text-center ">
+                                                <tr>
+                                                    <th>S.no</th>
+                                                    <th>Appointment ID</th>
+                                                    <th>Appointment Date</th>
+                                                    <th>Slot</th>
+                                                    <th>PatientID</th>
+                                                    <th>Department</th>
+                                                    <th>Doctor Name</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:if="${#lists.isEmpty(appointmentsDtoLst_model)}" class="text-center">
+                                                    <td colspan="9">No Employees found...</td>
+                                                </tr>
+                                                <tr th:each="app, appStat : ${appointmentsDtoLst_model}">
+                                                    <td th:text="${appStat.count}"></td>
+                                                    <td th:text="${app.appointmentId}"></td>
+                                                    <td th:text="${app.appointmentDate}"></td>
+                                                    <td th:text="${app.slot.slotName}"></td>
+                                                    <td th:text="${app.patient.patientMail}"></td>
+                                                    <td th:text="${app.department.departmentName}"></td>
+                                                    <td th:text="${app.doctor.doctorName}"></td>
+<!--                                                    <td th:text="${app.appointmentType}"></td>-->
+                                                    <td th:text="${app.appointmentStatus}"></td>
+                                                    <td>
+                                                        <!-- Employee View Button in Table -->
+                                                        <a th:if="${app.appointmentStatus == 'CONFIRMED'}" th:href="@{'/home/cancelAppointment/'+${app.appointmentId}}"
+                                                            class="btn btn-danger btn-sm">Cancel</a>
+                                                        <a th:unless="${app.appointmentStatus == 'CONFIRMED'}"
+                                                           class="btn btn-info btn-sm">NA</a>
+                                                        
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+<!--                                        <p th:if="${#fields.hasErrors()}" class="text-danger">-->
+<!--                                            <span th:text="${#fields.errors('customError')}"></span>-->
+<!--                                        </p>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${param.cancelled}">
+                            <div class="alert alert-info alert-sm">
+                                Appoint has been cancelled
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+        <!--        </form>-->
+    </div>
+    <script>
+        function setSlotId(button, slotId) {
+            // Find the hidden input field based on the slotId
+            const s_ID = slotId;
+            var slot = document.getElementById('appointmentSlot_' + slotId);
+            slot.value = slotId;
+            button.closest("form").submit();
+        }
+    </script>
+    <script th:src="@{/bootstrap/bootstrap-5.3.3-dist/js/bootstrap.js}"></script>
+</body>
+
+</html>

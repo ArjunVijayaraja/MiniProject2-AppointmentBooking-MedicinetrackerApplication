@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link th:href="@{/bootstrap/bootstrap-5.3.3-dist/css/bootstrap.css}" rel="stylesheet">
+    <style>
+        .custBG {
+          background-color: lightblue;
+          margin: 10px; /* Add some margin to avoid cutting edges on very small screens */
+
+        }
+
+         /* For screens smaller than 576px (mobile) */
+         @media (max-width: 576px) {
+          .form-label, .form-control, .btn, h4 {
+            font-size: 0.875rem; /* Smaller font size on mobile */
+          }
+        }
+
+        .errTxt {
+            margin-top: 1.2px;
+            margin-bottom: 0.8px;
+        }
+    </style>
+</head>
+<body>
+<form method="post" th:action="@{/patientApi/createPatient/save}" role="form" th:object="${p_registration_dto}">
+    <div class=" Container d-flex min-vh-100 justify-content-center p-3">
+        <div class="card col-lg-12 col-md-12 col-sm-12 custBG">
+            <div class="card-header text-center">
+                <h4>Registration Form</h4>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-lg-3 col-md-3 col-sm-12 mb-2">
+                        <label for="nameInput" class="form-label">Name</label>
+                        <input th:field="*{patientName}" type="text" class="form-control" id="nameInput"
+                               placeholder="Patient name..">
+                        <p th:errors="*{patientName}" class="text-danger errTxt mt-0"
+                           th:if="${#fields.hasErrors('patientName')}"></p>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 mb-2">
+                        <label for="emailInput" class="form-label fs-6 fs-sm-5">Email address</label>
+                        <input th:field="*{patientMail}" type="email" class="form-control" id="emailInput"
+                               placeholder="name@example.com">
+                        <p th:errors="*{patientMail}" class="text-danger errTxt mt-0"
+                           th:if="${#fields.hasErrors('patientMail')}"></p>
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-sm-12 mb-2">
+                        <label for="password" class="form-label fs-6 fs-sm-5">Password</label>
+                        <input th:field="*{password}" type="password" class="form-control" id="password"
+                               placeholder="password..">
+                        <p th:errors="*{password}" class="text-danger errTxt mt-0"
+                        th:if="${#fields.hasErrors('password')}"></p>
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-sm-12 mb-2">
+                        <label for="patientID" class="form-label fs-6 fs-sm-5">Patient Id</label>
+                        <input th:field="*{patientId}" type="text" class="form-control" id="patientID" readonly>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-lg-4 col-md-4 col-sm-12 mb-2 ">
+                        <label class="form-label fw-bold pe-4">Gender</label>
+                        <div class="col-lg-4 col-md-4 col-sm-12 mb-3">
+                            <label for="dobInput" class="form-label">DOB</label>
+                            <input th:field="*{dob}" type="date" class="form-control" id="dobInput">
+                            <p th:errors="*{dob}" class="text-danger errTxt mt-0"
+                               th:if="${#fields.hasErrors('dob')}"></p>
+                        </div>
+
+                    </div>
+
+                    <h4 class="mt-4">Contact Details</h4>
+                    <hr>
+                    <div class="row g-3">
+                        <div class="col-lg-2 col-md-2 col-sm-8 mb-2">
+                            <label for="contact1" class="form-label">Mobile Number 1</label>
+                            <input th:field="*{contactNumber}" type="text" class="form-control" id="contact1"
+                                   placeholder="Primary number">
+                            <p th:errors="*{contactNumber}" class="text-danger errTxt mt-0"
+                               th:if="${#fields.hasErrors('contactNumber')}"></p>
+
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-lg-2 col-md-2 col-sm-12 mb-2">
+                            <label for="cityInput" class="form-label">City</label>
+                            <input th:field="*{city}" type="text" class="form-control" id="cityInput"
+                                   placeholder="City">
+                            <p th:errors="*{city}" class="text-danger errTxt mt-0"
+                               th:if="${#fields.hasErrors('city')}"></p>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12 mb-2">
+                            <label for="countryInput" class="form-label">Country</label>
+                            <input th:field="*{country}" type="text" class="form-control" id="countryInput"
+                                   placeholder="Country">
+                            <p th:errors="*{country}" class="text-danger errTxt mt-0"
+                               th:if="${#fields.hasErrors('country')}"></p>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12 mb-2">
+                            <label for="pincodeInput" class="form-label">Pincode</label>
+                            <input th:field="*{pincode}" type="number" class="form-control" id="pincodeInput"
+                                   placeholder="Pincode">
+                            <p th:errors="*{pincode}" class="text-danger errTxt mt-0"
+                               th:if="${#fields.hasErrors('pincode')}"></p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Register</button>
+                    <a th:href="@{/registration}" type="reset" class="btn btn-success">Clear</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+<script th:src="@{/bootstrap/bootstrap-5.3.3-dist/js/bootstrap.js}"></script>
+</body>
+
+
+</html>

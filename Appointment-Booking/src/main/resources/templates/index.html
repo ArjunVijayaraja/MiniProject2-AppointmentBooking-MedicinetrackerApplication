@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Appointment Booking</title>
+    <link rel="stylesheet" th:href="@{/bootstrap/bootstrap-5.3.3-dist/css/bootstrap.css}">
+
+    <style>
+        .card{
+        background-color: rgba(128, 128, 128, 0.5);
+        }
+
+        body {
+            background-image: url('images/bgImage-1.jpg');
+            background-size: cover;        /* Ensure the image covers the whole area */
+            background-position: center;    /* Center the image */
+            background-repeat: no-repeat;   /* Prevent image repetition */
+            height: 100vh;                  /* Full viewport height */
+            margin: 0;
+        }
+
+    </style>
+</head>
+<body>
+<!--<div th:insert="~{header-fragment :: header}"></div>-->
+
+<!--<div class="text-center mt-3">-->
+<!--    <h3>Appointment Booking Application</h3>-->
+
+<!--</div>-->
+<form th:action="@{/login}" method="post">
+<div class="container cont min-vh-100 d-flex align-items-center justify-content-center justify-content-lg-end">
+
+    <div class="card col-lg-5 col-md-5">
+        <div class="card-body">
+            <div class="card-title text-center mb-3"> <h5>Login</h5></div>
+            <div class="form-floating mb-3">
+                <input type="email" name="username" class="form-control" id="floatingInput" placeholder="name@example.com">
+                <label for="floatingInput">Email address</label>
+            </div>
+            <div class="form-floating">
+                <input  type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
+                <label for="floatingPassword">Password</label>
+            </div>
+            <div class="mt-1">
+                <a href="#" class="text-decoration-none"> Forgot password?</a>
+            </div>
+            <div class="d-grid mt-3">
+            <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+            <div class="mt-1 text-center">
+                Don't have an account ? <a th:href="@{/registration}" class="text-decoration-none">Register</a>
+            </div>
+
+            <div class="text-center mt-3">
+                <a href="#" class="text-decoration-none">Forgot password?</a> |
+                <a th:href="@{/registration}" class="text-decoration-none">Sign up</a>
+            </div>
+
+
+        </div>
+    </div>
+
+
+</div>
+</form>
+
+<script th:src="@{/bootstrap/bootstrap-5.3.3-dist/js/bootstrap.min.js}"></script>
+
+</body>
+</html>
