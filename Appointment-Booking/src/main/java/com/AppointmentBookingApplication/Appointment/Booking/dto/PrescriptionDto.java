@@ -32,6 +32,7 @@ public class PrescriptionDto {
     @NotNull(message = "Prescribed Medicine cannot be null")
     @JsonIgnoreProperties("prescription") // Prevent recursion
     private List<PrescribedMedicineDto> prescribedMedicines;
+//    private Long appointmentId;
 
 
     private AppointmentDto appointment;

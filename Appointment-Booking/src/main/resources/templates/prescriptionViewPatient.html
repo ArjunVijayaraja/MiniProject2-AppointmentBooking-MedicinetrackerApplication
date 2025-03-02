@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <link  th:href="@{/bootstrap/bootstrap-5.3.3-dist/css/bootstrap.css}" rel="stylesheet">
+
+</head>
+<body>
+<div th:insert="~{header-fragment :: header}"></div>
+
+<div class="container">
+  <div class="card text-center">
+    <form>
+      <h3 class="card-header text-center">List of Prescribed Medicines</h3>
+      <div class="card-body text center">
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+            <th>S.No</th><th>Medicine Name</th><th>Duration</th><th>Instructions</th>
+            </thead>
+            <tbody class="text-center">
+            <tbody class="text-center">
+            <tr th:if="${#lists.isEmpty(prescriptionDtoModel.prescribedMedicines)}">
+              <td colspan="4">No data</td>
+            </tr>
+          <tr th:each="pm, pmStats : ${prescriptionDtoModel.prescribedMedicines}">
+            <td th:text = ${pmStats.count}></td>
+            <td th:text="${pm.medicine.medicineName}"></td>
+            <td th:text="${pm.duration}"></td>
+            <td th:text="${pm.instructions}"></td>
+
+          </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

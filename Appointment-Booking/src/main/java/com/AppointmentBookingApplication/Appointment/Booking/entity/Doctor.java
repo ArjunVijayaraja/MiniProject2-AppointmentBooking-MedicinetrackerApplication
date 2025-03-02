@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -29,17 +30,29 @@ public class Doctor {
     @Column(nullable = false)
     private String doctorMail;
     @Column(nullable = false)
+    private String password;
+    @Column(nullable = false)
     private String doctorStatus;
     @Column(nullable = false)
     private LocalDateTime entryDate;
     @Column(nullable = false)
     private LocalDateTime updatedDate;
+    @Column
+    private String departmentName;
 
-    @ManyToMany
+//    @ManyToMany
+//    @JoinTable(
+//            name="doctorDepartments",
+//            joinColumns = @JoinColumn(name="fk_doc_id",referencedColumnName = "doctorId"),
+//            inverseJoinColumns = @JoinColumn(name = "fk_dept_id", referencedColumnName = "departmentId")
+//    )
+//    private List<Department> departmentList;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
-            name="doctorDepartments",
-            joinColumns = @JoinColumn(name="fk_doc_id",referencedColumnName = "doctorId"),
-            inverseJoinColumns = @JoinColumn(name = "fk_dept_id", referencedColumnName = "departmentId")
+            name ="doctor_role",
+            joinColumns =@JoinColumn(name = "d_id", referencedColumnName = "doctorId"),
+            inverseJoinColumns =@JoinColumn(name = "r_id", referencedColumnName = "roleId")
     )
-    private List<Department> departmentList;
+    private Set<Role> roles;
 }

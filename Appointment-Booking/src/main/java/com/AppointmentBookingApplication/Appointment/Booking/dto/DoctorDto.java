@@ -19,6 +19,8 @@ public class DoctorDto {
     private LocalDate dob;
     private char gender;
     private String doctorMail;
+    private String password;
     private String doctorStatus;
-    private List<DepartmentDto> departmentList;
+//    private List<DepartmentDto> departmentList;
+    private String departmentName;
 }

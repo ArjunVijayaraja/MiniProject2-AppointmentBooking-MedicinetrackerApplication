@@ -34,16 +34,27 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/index", "/", "/login", "/logout",
                                         "/bootstrap/**", "/js/**", "/images/**", "/register/**").permitAll() // Public endpoints
-//                                .requestMatchers("/**").hasRole("PATIENT")
-                                //.anyRequest().authenticated()
-                                .requestMatchers("/**").permitAll()
-                                .anyRequest().permitAll()
+                                .requestMatchers("/doctor/docRegistration").permitAll()
+                                .requestMatchers("/doctor/**").hasRole("DOCTOR")
+                                .requestMatchers("/patientApi/**").permitAll()
+                                .requestMatchers("/registration").permitAll()
+//                                .requestMatchers("/**").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .formLogin(
                         form -> form.loginPage("/")
                                 .loginProcessingUrl("/login")
                                 .defaultSuccessUrl("/home", true)
                                 .permitAll()
+                                .successHandler(((request, response, authentication) -> {
+                                    if(authentication.getAuthorities().stream()
+                                            .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_DOCTOR"))){
+                                        response.sendRedirect("/doctor/viewAppointments");
+                                    }
+                                    else{
+                                        response.sendRedirect("/home");
+                                    }
+                                }))
                 )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.com">
+<head>
+    <meta charset="UTF-8">
+    <title>AppointmentList</title>
+  <link th:href="@{/bootstrap/bootstrap-5.3.3-dist/css/bootstrap.css}" rel="stylesheet">
+
+</head>
+<body>
+<div th:insert="~{header-fragment :: header}"></div>
+
+<div class="container">
+    <form th:object="${patientAppointmentList}">
+        <div class="card">
+            <h4 class="card-header text-center">List of Patient Appointments schedules</h4>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class=" table table-bordered">
+                        <thead class="text-center">
+                        <th>S.NO</th>
+                        <th>Patient Name</th>
+                        <th>Appointment Number</th>
+                        <th>Action</th>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(patientAppointmentList)}">
+                            <td colspan="4">No Appointment available....</td>
+                        </tr>
+                        <tr th:each="app,appStats : ${patientAppointmentList}">
+                          <td th:text="${appStats.count}"></td>
+                          <td th:text="${app.patient.patientName}"></td>
+                          <td th:text="${app.appointmentId}"></td>
+                          <td>
+                            <a th:href="@{'/prescription/'+${app.appointmentId}}" class="btn btn-sm btn-primary">View</a>
+                          </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

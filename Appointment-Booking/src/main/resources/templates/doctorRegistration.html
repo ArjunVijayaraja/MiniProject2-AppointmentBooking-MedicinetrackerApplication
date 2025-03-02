@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Registration</title>
+<!--    <link th:href="@{/bootstrap/bootstrap-5.3.3-dist/css/bootstrap.css}" rel="stylesheet">-->
+    <link th:href="@{/bootstrap/bootstrap-5.3.3-dist/css/bootstrap.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <form method="post" th:action="@{/doctor/createDoctor}" th:Object="${doctorDto}">
+        <div class="card">
+            <div class="justify-content-between">
+                <a th:href="@{/}" class="btn btn-sm btn-secondary">GO to Login Page</a>
+            <h4 class="card-header text-center">Doctor Registration</h4>
+            </div>
+            <div class="card-body">
+
+                <div class="row mb-3">
+
+                    <div class="col-lg-5">
+                        <label for="docId" class="form-label">Doctor Id:</label>
+                        <input th:field="*{doctorId}" type="number" id="docId" class="form-control" readonly >
+
+                    </div>
+                    <div class="col-lg-5">
+                        <label for="docName" class="form-label">Doctor name:</label>
+                        <input th:field="*{doctorName}" type="text" id="docName" class="form-control" placeholder="DoctorName" required>
+
+                    </div>
+
+                    <div class="col-lg-5">
+                        <label for="docMail" class="form-label">Doctor Mail:</label>
+                        <input th:field="*{doctorMail}" type="text" id="docMail" class="form-control" placeholder="Doctor mail Id.." required>
+
+                    </div>
+
+                    <div class="col-lg-5">
+                        <label for="password" class="form-label">Password:</label>
+                        <input th:field="*{password}" type="password" id="password" class="form-control" required>
+
+                    </div>
+
+
+                    <div class="col-lg-5">
+                        <label for="docDob" class="form-label">Doctor DOB:</label>
+                        <input th:field="*{dob}" type="date" id="docDob" class="form-control" required>
+
+                    </div>
+
+                    <div class="col-lg-5">
+                        <label for="docGender" class="form-label">Doctor Gender:</label>
+                        <select th:field="*{gender}" type="date" id="docGender" class="form-select">
+                            <option value="N">Select</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <label for="departmentName" class="form-label">DepartmentName:</label>
+                        <input th:field="*{departmentName}" type="text" id="departmentName" class="form-control" required>
+
+                    </div>
+
+
+
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-sm btn-success">Create Doctor</button>
+                </div>
+
+
+            </div>
+
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

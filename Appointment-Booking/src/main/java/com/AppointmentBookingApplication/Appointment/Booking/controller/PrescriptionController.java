@@ -2,16 +2,15 @@ package com.AppointmentBookingApplication.Appointment.Booking.controller;
 
 import com.AppointmentBookingApplication.Appointment.Booking.dto.*;
 import com.AppointmentBookingApplication.Appointment.Booking.entity.Prescription;
-import com.AppointmentBookingApplication.Appointment.Booking.service.AppointmentService;
-import com.AppointmentBookingApplication.Appointment.Booking.service.MedicineService;
-import com.AppointmentBookingApplication.Appointment.Booking.service.PatientService;
-import com.AppointmentBookingApplication.Appointment.Booking.service.PrescriptionService;
+import com.AppointmentBookingApplication.Appointment.Booking.service.*;
 import com.AppointmentBookingApplication.Appointment.Booking.utilsMethods.CommonFunctions;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.Banner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,6 +29,7 @@ public class PrescriptionController {
     private MedicineService medicineService;
     private PatientService patientService;
     private CommonFunctions cm;
+    private DoctorService doctorService;
 
 //    @PostMapping("/createPrescription")
 //    public ResponseEntity<PrescriptionDto> createPrescription(@RequestBody List<PrescribedMedicineDto> prescribedMedicineDtoList){
@@ -46,15 +46,32 @@ public class PrescriptionController {
 //    }
 
 
-    @GetMapping("/prescription")
-    public String displayPrescriptionPage(Model model){
-        PrescriptionDto prescriptionDto = new PrescriptionDto();
-        model.addAttribute("prescriptionDtoModel",prescriptionDto);
-        List<MedicineDto> medicineDtoList = medicineService.getAllMedicine();
-        model.addAttribute("medicineLst",medicineDtoList);
-        List<AppointmentDto> appointmentDtoList = appointmentService.getAllAppointmentByPatientMail(cm.getUserMailFromAuthentication());
-        model.addAttribute("appointmentList",appointmentDtoList);
-        return "prescription";
+    @GetMapping("/prescription/{appID}")
+    public String displayPrescriptionPage(@PathVariable("appID") long appointID, Model model){
+
+        PrescriptionDto prescriptionDto1 = prescriptionService.findPrescriptionByAppointmentId(appointID);
+        if(prescriptionDto1 != null && prescriptionDto1.getAppointment().getAppointmentId() == appointID){
+            model.addAttribute("prescriptionDtoModel",prescriptionDto1);
+            model.addAttribute("viewType","existingPrescription");
+            return "prescription";
+        }
+        else {
+
+
+            PrescriptionDto prescriptionDto = new PrescriptionDto();
+            AppointmentDto appointmentDto = appointmentService.findByAppointmentId(appointID);
+            prescriptionDto.setAppointment(appointmentDto);
+            model.addAttribute("prescriptionDtoModel", prescriptionDto);
+            model.addAttribute("appointmentId", appointID);
+            List<MedicineDto> medicineDtoList = medicineService.getAllMedicine();
+            model.addAttribute("medicineLst", medicineDtoList);
+//        List<AppointmentDto> appointmentDtoList = appointmentService.getAllAppointmentByPatientMail(cm.getUserMailFromAuthentication());
+            List<AppointmentDto> appointmentDtoList = doctorService.getAllAppointmentsforDoctor(SecurityContextHolder.getContext().getAuthentication().getName());
+            model.addAttribute("appointmentList", appointmentDtoList);
+
+
+            return "prescription";
+        }
     }
 
     @GetMapping("/prescV")
@@ -64,10 +81,11 @@ public class PrescriptionController {
 
     }
 
-    @PostMapping("/createPrescription")
+    @PostMapping("/createPrescription/{appointmentId}")
     public String createPrescription(@Valid @ModelAttribute("prescriptionDtoModel") PrescriptionDto prescriptionDto,
-                                                              BindingResult result, Model model, RedirectAttributes redirectAttributes){
-        PatientDto patientDto= patientService.findPatientByMail(cm.getUserMailFromAuthentication());
+                                                              @PathVariable("appointmentId") Long appointmentId,
+                                     BindingResult result, Model model, RedirectAttributes redirectAttributes){
+//        PatientDto patientDto= patientService.findPatientByMail(cm.getUserMailFromAuthentication());
        // prescriptionDto.setPatient(patientDto);
 
 
@@ -80,6 +98,7 @@ public class PrescriptionController {
         try{
             PrescriptionDto savedPrescriptionDto = prescriptionService.createPrescription(prescriptionDto);
             model.addAttribute("prescriptionDtoModel",savedPrescriptionDto);
+            model.addAttribute("appointmentId",appointmentId);
             redirectAttributes.addFlashAttribute("prescriptionDtoModel",savedPrescriptionDto);
 
             return "redirect:/prescV?Success";
@@ -99,25 +118,25 @@ public class PrescriptionController {
     }
 
 
-    @GetMapping("/prescription/{prescribID}")
+    @GetMapping("/viewPrescription/{prescribID}")
     public String getPrescriptionById(@PathVariable("prescribID") long prescribId, Model model, RedirectAttributes redirectAttributes){
 
         PrescriptionDto prescriptionDto = prescriptionService.getPrescription(prescribId);
         //prescriptionDto.setAppointment(null);
         model.addAttribute("prescriptionDtoModel",prescriptionDto);
        // model.addAttribute("prescriptionDtoModel", prescriptionDto.getPrescribedMedicines());
-        List<MedicineDto> medicineDtoList = medicineService.getAllMedicine();
-        model.addAttribute("medicineLst",medicineDtoList);
-        List<AppointmentDto> appointmentDtoList =appointmentService.getAllConfirmedAppointmentByPatientMail(cm.getUserMailFromAuthentication());
-        model.addAttribute("appointmentList",appointmentDtoList);
+//        List<MedicineDto> medicineDtoList = medicineService.getAllMedicine();
+//        model.addAttribute("medicineLst",medicineDtoList);
+//        List<AppointmentDto> appointmentDtoList =appointmentService.getAllConfirmedAppointmentByPatientMail(cm.getUserMailFromAuthentication());
+//        model.addAttribute("appointmentList",appointmentDtoList);
         model.addAttribute("viewType","existingPrescription");
 //        redirectAttributes.addFlashAttribute("viewType","existingPrescription");
-        model.addAttribute("viewType","existingPrescription");
+//        model.addAttribute("viewType","existingPrescription");
 //        redirectAttributes.addFlashAttribute("appId",prescribId);
         model.addAttribute("appId",prescribId);
         //PrescriptionDto prescriptionDto = prescriptionService.getPrescription(prescribId);
 
-        return "prescription";
+        return "prescriptionViewPatient";
     }
 
 //    @GetMapping("/prescription/{prescribID}")
@@ -151,7 +170,7 @@ public class PrescriptionController {
             model.addAttribute("prescriptionDtoModel",updatedPrescriptionDto);
             redirectAttributes.addFlashAttribute("prescriptionDtoModel",updatedPrescriptionDto);
 //            return "redirect:/prescription?updated";
-            return "redirect:/prescription/"+prescriptionId+"?updated";
+            return "redirect:/prescription/"+updatedPrescriptionDto.getAppointment().getAppointmentId()+"?updated";
         } catch (Exception e) {
             //throw new RuntimeException(e);
             return "prescription";
